@@ -8,7 +8,7 @@ import {
 } from "../services/otpService.ts";
 import { sendOtpEmail } from "../utils/emailService.js";
 import { findByEmail, createUser } from "../models/user.model.js";
-import { generateToken } from "../services/tokenService.js";
+import { generateToken } from "../services/tokenService.ts";
 
 
 export const requestSignupOtp = async (req: Request, res: Response) => {

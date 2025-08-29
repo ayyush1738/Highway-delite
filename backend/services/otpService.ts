@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import redisClient from "../config/redis.js";
+import redisClient from "../config/redis";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -19,7 +19,6 @@ export const canResend = async (email: string) => {
 
 export const saveOtp = async (email: string, otp: string) => {
   await redisClient.setEx(keyOtp(email), OTP_TTL, otp);
-  // set resend guard
   await redisClient.setEx(keyResend(email), OTP_RESEND_TTL, "1");
 };
 
