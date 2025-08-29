@@ -5,9 +5,9 @@ import {
   getStoredOtp,
   canResend,
   clearOtp,
-} from "../services/otpService.js";
+} from "../services/otpService.ts";
 import { sendOtpEmail } from "../utils/emailService.js";
-import { findByEmail, createUser } from "../models/userModel.js";
+import { findByEmail, createUser } from "../models/user.model.js";
 import { generateToken } from "../services/tokenService.js";
 
 
