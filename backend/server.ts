@@ -1,6 +1,6 @@
 import app from './index';
 import { connectRedis } from "./config/redis";
-import pool from "./config/db.js";
+import pool from "./config/db";
 import dotenv from "dotenv";
 dotenv.config();
 
