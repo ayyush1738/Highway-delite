@@ -5,10 +5,10 @@ import {
   getStoredOtp,
   canResend,
   clearOtp,
-} from "../services/otpService.ts";
+} from "../services/otpService";
 import { sendOtpEmail } from "../utils/emailService.js";
 import { findByEmail, createUser } from "../models/user.model.js";
-import { generateToken } from "../services/tokenService.ts";
+import { generateToken } from "../services/tokenService";
 
 
 export const requestSignupOtp = async (req: Request, res: Response) => {

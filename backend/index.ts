@@ -9,7 +9,7 @@ const app: Application = express();
 const PORT : number = Number(process.env.port) || 8000;
 
 app.use(express.json());
-app.use(bodyParser());
+app.use(bodyParser.json());
 
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200)
@@ -22,6 +22,4 @@ app.get('/health', (_req: Request, res: Response) => {
 
 app.use("api/auth", authRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
-});
+export default app;
