@@ -17,7 +17,7 @@ export const sendOtpEmail = async(to: string, otp: string) => {
         from: `"Notes App" <${process.env.SMTP_USER}>`,
         to,
         subject: "Your OTP code",
-        text: `Your OTP for Notes App is ${otp}. Use it to sign up or log in.`
-    })
+        text: `Your OTP for Notes App is ${otp}. It expires in ${Math.floor(Number(process.env.OTP_TTL_SECONDS ?? 300)/60)} minutes.`
+  });
     return info;
 }
