@@ -1,12 +1,11 @@
-import pkg from "pg";
-import dotenv from "dotenv";
-dotenv.config();
+import { Pool } from 'pg';
+import 'dotenv/config';
 
-const { Pool } = pkg;
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-pool.on("error", (err) => console.error("PG pool error", err));
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-export const initDb = async () => {
+const initDb = async () => {
   try {
     const client = await pool.connect();
     console.log('✅ Connected to the PostgreSQL database.');
@@ -20,12 +19,20 @@ export const initDb = async () => {
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `;
+
     await client.query(createTables);
     client.release();
     console.log('✅ Tables ensured.');
-  } catch (err) {
-    console.error("Error creating users table", err);
+  } catch (err: unknown) {
+    // Type assertion to handle unknown error
+    if (err instanceof Error) {
+      console.error('❌ Database initialization error:', err.stack);
+    } else {
+      console.error('❌ Database initialization error:', err);
+    }
   }
 };
+
+initDb();
 
 export default pool;
