@@ -25,7 +25,7 @@ export default function Forms() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://localhost:8000/api/auth/signup/verify-otp", {
+            const res = await fetch("http://localhost:8000/api/auth/signup/send-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -53,7 +53,7 @@ export default function Forms() {
         e.preventDefault();
 
         try {
-            const res = await fetch("/api/auth/signup/verify-otp", {
+            const res = await fetch("http://localhost:8000/api/auth/signup/verify-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
