@@ -12,10 +12,10 @@ export default function Dashboard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     console.log(token)
-    // if (!token) {
-    //   navigate("/"); // redirect if not logged in
-    //   return;
-    // }
+    if (!token) {
+      navigate("/"); // redirect if not logged in
+      return;
+    }
     fetch("http://localhost:8000/api/users/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -45,7 +45,7 @@ export default function Dashboard() {
       return;
     }
 
-    const res = await fetch("/api/notes/create-notes", {
+    const res = await fetch("http://localhost:8000/api/notes/create-notes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

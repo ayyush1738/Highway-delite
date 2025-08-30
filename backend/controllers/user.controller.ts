@@ -18,3 +18,16 @@ export const getProfile = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to fetch profile" });
   }
 };
+
+export const getNotes = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const query = `SELECT id, title, created_at FROM notes WHERE user_id = $1 ORDER BY created_at DESC`;
+    const { rows } = await pool.query(query, [user.id]);
+    return res.json({ notes: rows });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to fetch notes" });
+  }
+};
+
