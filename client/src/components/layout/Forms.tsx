@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import InputField from "../ui/InputField";
+import { useNavigate } from "react-router-dom";
 
 export default function Forms() {
     const [signup, setSignup] = useState(true);
@@ -12,6 +13,8 @@ export default function Forms() {
 
     const [showOtpField, setShowOtpField] = useState(false);
     const [timer, setTimer] = useState(0);
+
+    const navigate = useNavigate();
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +34,7 @@ export default function Forms() {
                 body: JSON.stringify({
                     email: formData.email,
                     name: formData.name,   // only if backend still requires
-                    dob: formData.dob      // "
+                    dob: formData.dob      
                 }),
             });
 
@@ -62,8 +65,9 @@ export default function Forms() {
             if (res.ok) {
                 const data = await res.json();
                 console.log("Signup successful!", data);
-                // maybe store token in localStorage
                 localStorage.setItem("token", data.token);
+
+                navigate("/dashboard");
             } else {
                 const err = await res.json();
                 console.error("Signup failed:", err.error);
@@ -72,8 +76,6 @@ export default function Forms() {
             console.error("Error submitting form", err);
         }
     };
-
-
 
     useEffect(() => {
         if (timer > 0) {
@@ -103,7 +105,6 @@ export default function Forms() {
                         onSubmit={showOtpField ? handleSubmit : handleGetOtp}
                         className="w-[90%] h-[80%] mt-4 space-y-4"
                     >
-
                         <InputField
                             id="name"
                             label="Your Name"
@@ -112,7 +113,6 @@ export default function Forms() {
                             value={formData.name}
                             onChange={handleChange}
                         />
-                        {/* Date of Birth */}
                         <InputField
                             id="dob"
                             label="Date of Birth"
@@ -170,7 +170,6 @@ export default function Forms() {
                             </div>
                         )}
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 cursor-pointer hover:bg-blue-600"

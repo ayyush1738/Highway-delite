@@ -1,10 +1,15 @@
+import { Routes, Route } from "react-router-dom";
 import Home from './components/layout/Home'
+import Dashboard from "./components/Notes";
 
 function App() {
 
   return (
     <div className='bg-white h-screen w-screen p-2'>
-      <Home />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
     </div>
   )
 }

@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser'
 import authRoutes from './routes/auth.routes'
 import noteRoutes from './routes/notes.routes'
+import userRoutes from "./routes/user.routes";
+
 import cors from 'cors'
 
 dotenv.config();
@@ -26,5 +28,6 @@ app.get('/health', (_req: Request, res: Response) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", noteRoutes);
+app.use("/api/users", userRoutes);
 
 export default app;
