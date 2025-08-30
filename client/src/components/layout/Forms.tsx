@@ -6,7 +6,8 @@ export default function Forms() {
     const [formData, setFormData] = useState({
         name: "",
         dob: "",
-        password: "",
+        email: "",
+        otp: ""
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +57,7 @@ export default function Forms() {
                         <InputField
                             id="dob"
                             label="Date of Birth"
+                            type="date"
                             placeholder="11 December 1997"
                             value={formData.dob}
                             onChange={handleChange}
@@ -66,6 +68,10 @@ export default function Forms() {
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
+onClick={() => {
+        const input = document.getElementById("dob") as HTMLInputElement | null;
+        input?.showPicker?.(); // 👈 opens native date picker
+      }}
                                 >
                                     <path
                                         strokeLinecap="round"
