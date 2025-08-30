@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import {createNotes, deleteNotes} from '../controllers/notes.controller';
+import {createNotes, deleteNotes } from '../controllers/notes.controller';
 import { authenticateToken } from '../middlewares/auth.middleware'
 const router = Router();
 

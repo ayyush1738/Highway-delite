@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser'
 import authRoutes from './routes/auth.routes'
+import noteRoutes from './routes/notes.routes'
 
 dotenv.config();
 
@@ -20,5 +21,6 @@ app.get('/health', (_req: Request, res: Response) => {
 })
 
 app.use("/api/auth", authRoutes);
+app.use("/api/notes", noteRoutes);
 
 export default app;

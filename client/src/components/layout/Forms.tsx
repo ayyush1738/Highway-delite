@@ -21,39 +21,77 @@ export default function Forms() {
         });
     };
 
-    useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timer]);
+    const handleGetOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
+        try {
+            const res = await fetch("http://localhost:8000/api/auth/signup/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: formData.email,
+                    name: formData.name,   // only if backend still requires
+                    dob: formData.dob      // "
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                console.error("Error:", err.error);
+                return;
+            }
+
+            console.log("OTP sent to:", formData.email);
+            setShowOtpField(true);
+            setTimer(300);
+        } catch (err) {
+            console.error("Failed to send OTP", err);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Example API call
-        const res = await fetch("/api/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
+        try {
+            const res = await fetch("/api/auth/signup/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
 
-        if (res.ok) {
-            console.log("Signup successful!");
-        } else {
-            console.error("Signup failed");
+            if (res.ok) {
+                const data = await res.json();
+                console.log("Signup successful!", data);
+                // maybe store token in localStorage
+                localStorage.setItem("token", data.token);
+            } else {
+                const err = await res.json();
+                console.error("Signup failed:", err.error);
+            }
+        } catch (err) {
+            console.error("Error submitting form", err);
         }
     };
+
+
+
+    useEffect(() => {
+        if (timer > 0) {
+            const interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [timer]);
+
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, "0");
+        const s = (seconds % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+    };
+
 
     return (
         <div className="h-[80%] w-full flex justify-center items-center align-middle">
@@ -62,7 +100,7 @@ export default function Forms() {
                     <h2 className="text-black text-4xl font-bold mt-8 mb-4">Sign up</h2>
                     <p className="text-gray-500">Sign up to enjoy the feature of HD</p>
                     <form
-                        onSubmit={handleSubmit}
+                        onSubmit={showOtpField ? handleSubmit : handleGetOtp}
                         className="w-[90%] h-[80%] mt-4 space-y-4"
                     >
 
@@ -104,8 +142,6 @@ export default function Forms() {
                             }
                         />
 
-
-                        {/* Password */}
                         <InputField
                             id="email"
                             label="Your Email"
@@ -139,8 +175,9 @@ export default function Forms() {
                             type="submit"
                             className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 cursor-pointer hover:bg-blue-600"
                         >
-                            Get OTP
+                            {showOtpField ? "Verify OTP" : "Get OTP"}
                         </button>
+
                     </form>
                 </div>
             ) : (

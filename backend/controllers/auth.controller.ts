@@ -14,7 +14,7 @@ import { generateToken } from "../services/tokenService";
 export const requestSignupOtp = async (req: Request, res: Response) => {
   try {
     const { email, name, dob } = req.body;
-    if (!email || !name ) return res.status(400).json({ error: "email, name, dob required" });
+    if (!email || !name || !dob ) return res.status(400).json({ error: "email, name, dob required" });
     const otp = generateOtp();
     await saveOtp(email, otp);
     await sendOtpEmail(email, otp);
@@ -28,7 +28,7 @@ export const requestSignupOtp = async (req: Request, res: Response) => {
 export const verifySignupOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp, name, dob } = req.body;
-    if (!email || !otp || !name ) return res.status(400).json({ error: "email, otp, name, dob required" });
+    if (!email || !otp || !name || !dob ) return res.status(400).json({ error: "email, otp, name, dob required" });
 
     const stored = await getStoredOtp(email);
     if (!stored) return res.status(400).json({ error: "OTP expired or not requested" });
