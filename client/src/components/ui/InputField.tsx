@@ -31,7 +31,7 @@ export default function InputField({
       </label>
 
       {/* Input wrapper */}
-      <div className="flex items-center border border-gray-400 rounded-md px-3 py-2">
+      <div className="flex items-center border border-gray-400 rounded-md px-3 focus-within:border-blue-600 py-2">
         {icon && <span className="mr-2 text-gray-500">{icon}</span>}
         <input
           type={type}

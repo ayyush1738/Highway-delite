@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import InputField from "../ui/InputField";
 
 export default function Forms() {
@@ -10,12 +10,33 @@ export default function Forms() {
         otp: ""
     });
 
+    const [showOtpField, setShowOtpField] = useState(false);
+    const [timer, setTimer] = useState(0);
+
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
         });
     };
+
+    useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -64,14 +85,14 @@ export default function Forms() {
                             icon={
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5"
+                                    className="h-5 w-5 cursor-pointer"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
-onClick={() => {
-        const input = document.getElementById("dob") as HTMLInputElement | null;
-        input?.showPicker?.(); // 👈 opens native date picker
-      }}
+                                    onClick={() => {
+                                        const input = document.getElementById("dob") as HTMLInputElement | null;
+                                        input?.showPicker?.();
+                                    }}
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -83,8 +104,6 @@ onClick={() => {
                             }
                         />
 
-                        {/* Email */}
-                        
 
                         {/* Password */}
                         <InputField
@@ -96,12 +115,31 @@ onClick={() => {
                             onChange={handleChange}
                         />
 
+                        {showOtpField && (
+                            <div className="space-y-2">
+                                <InputField
+                                    id="otp"
+                                    label="Enter OTP"
+                                    type="text"
+                                    placeholder="Enter the 6-digit OTP"
+                                    value={formData.otp}
+                                    onChange={handleChange}
+                                />
+                                <p className="text-sm text-gray-500">
+                                    Time left:{" "}
+                                    <span className="font-semibold text-red-500">
+                                        {formatTime(timer)}
+                                    </span>
+                                </p>
+                            </div>
+                        )}
+
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800"
+                            className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 cursor-pointer hover:bg-blue-600"
                         >
-                            Sign up
+                            Get OTP
                         </button>
                     </form>
                 </div>
