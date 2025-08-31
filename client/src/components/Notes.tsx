@@ -92,8 +92,6 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen p-2">
-            {/* Header */}
-            {/* Header */}
             <div className="p-4 w-full flex flex-row justify-between items-center">
                 <section className="flex flex-row items-center">
                     <img src="/icon.png" alt="" className="w-6 h-6 md:w-10 md:h-10" />
@@ -110,7 +108,6 @@ export default function Dashboard() {
             </div>
 
 
-            {/* User Info */}
             <div className="w-full sm:w-[80%] py-12 mx-auto mt-6 rounded-2xl shadow-2xl border-2 p-6 border-gray-200">
                 <h1 className="text-black text-2xl sm:text-4xl font-bold">
                     Welcome, {name}
@@ -122,7 +119,7 @@ export default function Dashboard() {
             <div className="w-full sm:w-[80%] mx-auto flex flex-col p-4 justify-center items-center">
                 <button
                     onClick={() => setShowModal(true)}
-                    className="w-full sm:w-[50%] h-14 sm:h-20 bg-blue-500 text-white py-2 rounded-2xl mt-4 cursor-pointer hover:bg-blue-600"
+                    className="w-full sm:w-[50%] h-14 sm:h-20 bg-blue-500 text-white py-2 rounded-md mt-4 cursor-pointer hover:bg-blue-600"
                 >
                     Create Note
                 </button>
@@ -134,7 +131,7 @@ export default function Dashboard() {
                         notes.map((note) => (
                             <div
                                 key={note.id}
-                                className="p-4 mb-2 border text-black rounded-lg shadow hover:bg-gray-100 flex justify-between items-center"
+                                className="p-4 mb-2 border shadow-2xl shadow-gray-800 text-black rounded-md hover:bg-gray-100 flex justify-between items-center"
                             >
                                 <span className="truncate">{note.title}</span>
                                 <div

@@ -26,7 +26,7 @@ export default function Home() {
       <div className="w-full md:w-[60%] hidden md:flex h-screen rounded-2xl overflow-hidden">
         <img
           src={container}
-          className="w-full h-full object-cover"
+          className="w-full "
           alt="Illustration"
         />
       </div>

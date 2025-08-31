@@ -1,4 +1,3 @@
-// Forms.tsx (Your original code with ONE critical fix for the Resend OTP button)
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +67,6 @@ export default function Forms() {
     }
     setError(null);
     setSuccess(null);
-    setLoading(true); // Set loading true for OTP request
     try {
       const res = await fetch("http://localhost:8000/api/auth/signin/send-otp", {
         method: "POST",
@@ -167,7 +165,6 @@ export default function Forms() {
     <div className="h-[80%] w-full flex justify-center items-start md:items-center">
       <div className="w-full md:w-[80%] p-4 md:p-12 flex flex-col items-center md:items-start">
 
-        {/* SIGN UP FORM */}
         {signup && (
           <div className="w-full max-w-md md:mt-12">
             <h2 className="text-black text-2xl md:text-4xl font-bold mt-2 md:mt-8 mb-4 text-center md:text-left">
@@ -220,7 +217,7 @@ export default function Forms() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-2 flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
+                className={`w-full py-2 cursor-pointer flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
               >
                 {loading ? (
                   <>
@@ -228,15 +225,15 @@ export default function Forms() {
                     Processing...
                   </>
                 ) : (
-                  showOtpField ? "Verify OTP & Sign Up" : "Get OTP"
+                  showOtpField ? "Sign up" : "Get OTP"
                 )}
               </button>
             </form>
 
-            <p className="mt-4 text-center md:text-left text-gray-600">
+            <p className="mt-4 flex justify-center text-center md:text-left text-gray-600">
               Already have an account?{" "}
               <span
-                className="text-blue-500 cursor-pointer underline"
+                className="text-blue-500 ml-1 cursor-pointer underline"
                 onClick={() => { setSignup(false); resetForms(); }}
               >
                 Sign in
@@ -245,10 +242,9 @@ export default function Forms() {
           </div>
         )}
 
-        {/* SIGN IN FORM */}
         {!signup && (
-          <div className="w-full max-w-md mt-4 md:mt-12">
-            <h2 className="text-black text-2xl md:text-4xl font-bold mt-8 mb-4 text-center md:text-left">
+          <div className="w-full max-w-md md:mt-12">
+            <h2 className="text-black text-2xl md:text-4xl font-bold mt-2 md:mt-8 mb-4 text-center md:text-left">
               Sign In
             </h2>
             <p className="text-gray-500 mb-4 text-center md:text-left">
@@ -278,35 +274,37 @@ export default function Forms() {
               />
 
               {/* Keep me logged in checkbox and Resend OTP link */}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between flex-col items-start">
+                <button
+                  type="button"
+                  onClick={handleSignInOtpRequest}
+                  disabled={timer > 0 || loading}
+                  className="font-bold mb-4 text-sm text-blue-500 underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
+                  {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
+                </button>
                 <div className="flex items-center">
                   <input
                     id="keepLoggedIn"
                     type="checkbox"
                     checked={keepLoggedIn}
                     onChange={(e) => setKeepLoggedIn(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="peer h-4 w-4 appearance-none rounded border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 relative"
                   />
-                  <label htmlFor="keepLoggedIn" className="ml-2 block text-sm text-gray-900">
+                  <span className="pointer-events-none absolute cursor-pointer border-2 rounded border-gray-800 w-4 h-4 flex items-center justify-center text-white text-[10px] font-bold peer-checked:flex">
+                    ✔
+                  </span>
+                  <label htmlFor="keepLoggedIn" className="ml-2 text-sm text-gray-700">
                     Keep me logged in
                   </label>
-                </div>
 
-                {/* CRITICAL FIX: Add type="button" here */}
-                <button
-                  type="button" // <--- ADD THIS LINE
-                  onClick={handleSignInOtpRequest}
-                  disabled={timer > 0 || loading}
-                  className="font-bold text-sm text-blue-500 hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
-                >
-                  {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
-                </button>
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-2 flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
+                className={`w-full py-2 cursor-pointer flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
               >
                 {loading ? (
                   <>
