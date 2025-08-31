@@ -1,20 +1,33 @@
-import app from './index';
+import app from "./index";
 import { connectRedis } from "./config/redis";
 import dotenv from "dotenv";
+
 dotenv.config();
 
+let redisConnected = false;
 
-const PORT : number = Number(process.env.PORT) || 8000;
-
-
-const start = async () => {
-  try {
+async function initRedis() {
+  if (!redisConnected) {
     await connectRedis();
-    app.listen(Number(PORT), () => console.log(`Server listening on ${PORT}`));
-  } catch (err) {
-    console.error("Startup error", err);
-    process.exit(1);
+    redisConnected = true;
   }
-};
+}
 
-start();
+// For local dev
+if (process.env.VERCEL !== "1") {
+  const PORT = process.env.PORT || 8000;
+  initRedis().then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  });
+}
+
+// For Vercel
+export default async function handler(req: any, res: any) {
+  try {
+    await initRedis();
+    return app(req, res);
+  } catch (err) {
+    console.error("Handler error:", err);
+    res.status(500).send("Internal Server Error");
+  }
+}

@@ -277,7 +277,6 @@ export default function Forms() {
                 onChange={handleChange}
               />
 
-              {/* Keep me logged in checkbox and Resend OTP link */}
               <div className="flex justify-between flex-col items-start">
                 <button
                   type="button"
