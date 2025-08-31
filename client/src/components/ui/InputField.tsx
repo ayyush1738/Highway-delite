@@ -1,4 +1,3 @@
-// InputField.tsx
 import type { ReactNode } from "react";
 
 interface InputFieldProps {
@@ -8,7 +7,7 @@ interface InputFieldProps {
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  icon?: ReactNode; // for passing svg or icons
+  icon?: ReactNode;
 }
 
 export default function InputField({
@@ -22,7 +21,6 @@ export default function InputField({
 }: InputFieldProps) {
   return (
     <div className="relative w-full mb-4">
-      {/* Floating label */}
       <label
         htmlFor={id}
         className="absolute -top-2 left-3 bg-white text-gray-500 px-1 text-sm"
@@ -30,7 +28,6 @@ export default function InputField({
         {label}
       </label>
 
-      {/* Input wrapper */}
       <div className="flex items-center border border-gray-400 rounded-md px-3 focus-within:border-blue-600 py-2">
         {icon && <span className="mr-2 text-gray-500">{icon}</span>}
         <input

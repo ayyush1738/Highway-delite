@@ -10,13 +10,13 @@ export default function Home() {
           <img
             src="/logo.png"
             alt="Logo"
-            className="w-14 md:w-auto mx-auto md:mx-0"
+            className="w-14 md:w-auto mt-4 md:mt-1 mx-auto md:mx-0"
           />
         </section>
 
         {/* Form takes remaining space */}
         <div className="flex-1 overflow-y-auto">
-          <div className="h-full w-full p-4 box-border">
+          <div className="h-full w-full md:p-4 box-border">
             <Forms />
           </div>
         </div>

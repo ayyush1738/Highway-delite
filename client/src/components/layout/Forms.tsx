@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
+import { Calendar } from "lucide-react"; // calendar icon
 
 export default function Forms() {
   const [signup, setSignup] = useState(true);
@@ -11,7 +12,6 @@ export default function Forms() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showOtp, setShowOtp] = useState(false);
 
   const navigate = useNavigate();
 
@@ -100,19 +100,13 @@ export default function Forms() {
     }
   }, [timer]);
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
   return (
     <div className="h-[80%] w-full flex justify-center items-start md:items-center">
       <div className="w-full md:w-[80%] p-4 md:p-12 flex flex-col items-center md:items-start">
         {/* SIGN UP FORM */}
         {signup && (
           <div className="w-full max-w-md md:mt-12">
-            <h2 className="text-black text-2xl md:text-4xl font-bold mt-8 mb-4 text-center md:text-left">
+            <h2 className="text-black text-2xl md:text-4xl font-bold mt-2 md:mt-8 mb-4 text-center md:text-left">
               Sign Up
             </h2>
             <p className="text-gray-500 mb-4 text-center md:text-left">
@@ -137,6 +131,7 @@ export default function Forms() {
                 type="date"
                 value={signUpData.dob}
                 onChange={handleChange}
+                icon={<Calendar className="w-5 h-5" />} // calendar icon at start
               />
               <InputField
                 id="email"
@@ -151,15 +146,10 @@ export default function Forms() {
                 <InputField
                   id="otp"
                   label="OTP"
-                  type={showOtp ? "text" : "password"}
+                  type="password" // removed hide/show toggle
                   placeholder="Enter OTP"
                   value={signUpData.otp}
                   onChange={handleChange}
-                  icon={
-                    <div onClick={() => setShowOtp((prev) => !prev)}>
-                      {showOtp ? "Hide" : "Show"}
-                    </div>
-                  }
                 />
               )}
 
@@ -210,15 +200,10 @@ export default function Forms() {
                 <InputField
                   id="otp"
                   label="OTP"
-                  type={showOtp ? "text" : "password"}
+                  type="password" // removed hide/show toggle
                   placeholder="Enter OTP"
                   value={signInData.otp}
                   onChange={handleChange}
-                  icon={
-                    <div onClick={() => setShowOtp((prev) => !prev)}>
-                      {showOtp ? "Hide" : "Show"}
-                    </div>
-                  }
                 />
               )}
 
