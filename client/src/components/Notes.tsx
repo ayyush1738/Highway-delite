@@ -30,7 +30,6 @@ export default function Dashboard() {
       })
       .catch(() => navigate("/"));
 
-    // Fetch notes
     fetchNotes();
   }, [navigate]);
 
@@ -75,6 +74,22 @@ export default function Dashboard() {
     }
   };
 
+  // Delete Note
+  const deleteNote = async (id: string) => {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:8000/api/notes/delete-notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ noteId: id }),
+    });
+    const data = await res.json();
+    if (res.ok) fetchNotes();
+    else alert(data.error || "Failed to delete note");
+  };
+
   return (
     <div className="h-full w-full p-2">
       {/* Header */}
@@ -112,9 +127,14 @@ export default function Dashboard() {
             notes.map((note) => (
               <div
                 key={note.id}
-                className="p-4 mb-2 border rounded-lg shadow hover:bg-gray-100 cursor-pointer"
+                className="p-4 mb-2 border text-black rounded-lg shadow hover:bg-gray-100 flex justify-between items-center"
               >
-                {note.title}
+                <span>{note.title}</span>
+                <div
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => deleteNote(note.id)}
+                >          <img src="/del.png" alt="" />
+</div>
               </div>
             ))
           ) : (
@@ -132,13 +152,13 @@ export default function Dashboard() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title"
-              className="w-full p-2 border rounded-lg mb-3"
+              className="w-full p-2 border rounded-lg mb-3 text-black"
             />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Note content"
-              className="w-full p-2 border rounded-lg mb-3"
+              className="w-full p-2 border rounded-lg mb-3 text-black"
             />
             <div className="flex justify-between">
               <button

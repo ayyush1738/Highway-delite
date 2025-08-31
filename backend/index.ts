@@ -1,9 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import bodyParser from 'body-parser'
 import authRoutes from './routes/auth.routes'
 import noteRoutes from './routes/notes.routes'
 import userRoutes from "./routes/user.routes";
+import helmet from "helmet";
 
 import cors from 'cors'
 
@@ -11,11 +11,12 @@ dotenv.config();
 
 const app: Application = express();
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({ origin: "https://notesappq4.vercel.app", credentials: true }));
 
 
 app.use(express.json());
-app.use(bodyParser.json());
+app.use(helmet());
+
 
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200)
