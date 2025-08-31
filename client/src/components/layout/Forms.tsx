@@ -1,3 +1,4 @@
+// Forms.tsx (Your original code with ONE critical fix for the Resend OTP button)
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +14,7 @@ export default function Forms() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false); // Track if OTP has been sent for sign-in
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false); // State for the checkbox
 
   const navigate = useNavigate();
 
@@ -66,6 +68,7 @@ export default function Forms() {
     }
     setError(null);
     setSuccess(null);
+    setLoading(true); // Set loading true for OTP request
     try {
       const res = await fetch("http://localhost:8000/api/auth/signin/send-otp", {
         method: "POST",
@@ -87,7 +90,7 @@ export default function Forms() {
       console.error(err);
       setError("Failed to send OTP. Please try again.");
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading false after OTP request
     }
   };
 
@@ -103,6 +106,7 @@ export default function Forms() {
         ? "http://localhost:8000/api/auth/signup/verify-otp"
         : "http://localhost:8000/api/auth/signin/verify-otp";
 
+      // The body sent to the backend should be signInData, keepLoggedIn is a client-side preference
       const body = signup ? signUpData : signInData;
 
       const res = await fetch(url, {
@@ -113,12 +117,22 @@ export default function Forms() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
+      if (res.ok && data.token) {
+        if (keepLoggedIn) {
+          // just store raw token
+          localStorage.setItem("token", data.token);
+        } else {
+          // wrap with expiry in another key
+          const expiry = Date.now() + 60 * 60 * 1000; // 1 hour
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("expiry", expiry.toString());
+        }
         navigate("/dashboard");
+
       } else {
         setError(data.error || "Verification failed");
       }
+
     } catch (err) {
       console.error(err);
       setError("Error submitting form. Please try again.");
@@ -138,17 +152,21 @@ export default function Forms() {
   }, [timer]);
 
   const resetForms = () => {
-      setError(null);
-      setSuccess(null);
-      setShowOtpField(false);
-      setOtpSent(false);
-      setTimer(0);
+    setError(null);
+    setSuccess(null);
+    setShowOtpField(false);
+    setOtpSent(false);
+    setTimer(0);
+    setKeepLoggedIn(false); // Also reset the checkbox state
+    // It's good practice to clear form data on switch as well
+    setSignUpData({ name: "", dob: "", email: "", otp: "" });
+    setSignInData({ email: "", otp: "" });
   }
 
   return (
     <div className="h-[80%] w-full flex justify-center items-start md:items-center">
       <div className="w-full md:w-[80%] p-4 md:p-12 flex flex-col items-center md:items-start">
-        
+
         {/* SIGN UP FORM */}
         {signup && (
           <div className="w-full max-w-md md:mt-12">
@@ -250,20 +268,40 @@ export default function Forms() {
                 onChange={handleChange}
               />
 
-              
-                  <InputField
-                    id="otp"
-                    label="OTP"
-                    type="password"
-                    placeholder="Enter OTP"
-                    value={signInData.otp}
-                    onChange={handleChange}
+              <InputField
+                id="otp"
+                label="OTP"
+                type="password"
+                placeholder="Enter OTP"
+                value={signInData.otp}
+                onChange={handleChange}
+              />
+
+              {/* Keep me logged in checkbox and Resend OTP link */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <input
+                    id="keepLoggedIn"
+                    type="checkbox"
+                    checked={keepLoggedIn}
+                    onChange={(e) => setKeepLoggedIn(e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-        
+                  <label htmlFor="keepLoggedIn" className="ml-2 block text-sm text-gray-900">
+                    Keep me logged in
+                  </label>
+                </div>
 
-                <button onClick={handleSignInOtpRequest} ><div className="font-bold text-sm py-2 flex justify-center items-center rounded text-blue-500 underline">Resend OTP</div></button>
-            
-
+                {/* CRITICAL FIX: Add type="button" here */}
+                <button
+                  type="button" // <--- ADD THIS LINE
+                  onClick={handleSignInOtpRequest}
+                  disabled={timer > 0 || loading}
+                  className="font-bold text-sm text-blue-500 hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
+                  {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
+                </button>
+              </div>
 
               <button
                 type="submit"
