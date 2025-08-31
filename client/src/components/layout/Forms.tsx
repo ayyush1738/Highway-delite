@@ -97,8 +97,8 @@ export default function Forms() {
 
   return (
     <div className="h-[80%] w-full flex justify-center items-center">
-      <div className="w-[80%] h-[80%] p-12">
-        <h2 className="text-black text-4xl font-bold mt-8 mb-4">
+      <div className="w-full h-full md:w-[80%] md:h-[80%] p-12 ">
+        <h2 className="text-black text-2xl md:text-4xl font-bold mt-8 mb-4">
           {signup ? "Sign Up" : "Sign In"}
         </h2>
         <p className="text-gray-500">
