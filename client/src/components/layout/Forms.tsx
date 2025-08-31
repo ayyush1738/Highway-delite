@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Loader2 } from "lucide-react"; // Loader2 for spinner
+import { Calendar, Loader2 } from "lucide-react"; 
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function Forms() {
   const [signup, setSignup] = useState(true);
@@ -32,7 +34,7 @@ export default function Forms() {
     setLoading(true);
 
     try {
-      const url = "http://localhost:8000/api/auth/signup/send-otp";
+      const url = `${API_URL}/api/auth/signup/send-otp`;
       const body = { name: signUpData.name, dob: signUpData.dob, email: signUpData.email };
 
       const res = await fetch(url, {
@@ -68,7 +70,7 @@ export default function Forms() {
     setError(null);
     setSuccess(null);
     try {
-      const res = await fetch("http://localhost:8000/api/auth/signin/send-otp", {
+      const res = await fetch(`${API_URL}/api/auth/signin/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: signInData.email }),
@@ -101,10 +103,9 @@ export default function Forms() {
 
     try {
       const url = signup
-        ? "http://localhost:8000/api/auth/signup/verify-otp"
-        : "http://localhost:8000/api/auth/signin/verify-otp";
+        ?  `${API_URL}/api/auth/signup/verify-otp`
+        :  `${API_URL}/api/auth/signin/verify-otp`;
 
-      // The body sent to the backend should be signInData, keepLoggedIn is a client-side preference
       const body = signup ? signUpData : signInData;
 
       const res = await fetch(url, {
@@ -117,10 +118,8 @@ export default function Forms() {
 
       if (res.ok && data.token) {
         if (keepLoggedIn) {
-          // just store raw token
           localStorage.setItem("token", data.token);
         } else {
-          // wrap with expiry in another key
           const expiry = Date.now() + 60 * 60 * 1000; // 1 hour
           localStorage.setItem("token", data.token);
           localStorage.setItem("expiry", expiry.toString());
@@ -140,14 +139,19 @@ export default function Forms() {
   };
 
   useEffect(() => {
-    let interval: number | undefined;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
     if (timer > 0) {
       interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
     }
-    return () => clearInterval(interval);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [timer]);
+
 
   const resetForms = () => {
     setError(null);
@@ -156,7 +160,6 @@ export default function Forms() {
     setOtpSent(false);
     setTimer(0);
     setKeepLoggedIn(false); // Also reset the checkbox state
-    // It's good practice to clear form data on switch as well
     setSignUpData({ name: "", dob: "", email: "", otp: "" });
     setSignInData({ email: "", otp: "" });
   }

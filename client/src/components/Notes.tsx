@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [name, setName] = useState("");
@@ -10,14 +12,13 @@ export default function Dashboard() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
 
-    // Fetch user profile
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
             navigate("/");
             return;
         }
-        fetch("http://localhost:8000/api/users/me", {
+        fetch(`${API_URL}/api/users/me`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -35,27 +36,25 @@ export default function Dashboard() {
 
     const fetchNotes = async () => {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/notes", {
+        const res = await fetch(`${API_URL}/api/notes`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         if (res.ok) setNotes(data.notes);
     };
 
-    // Signout
     const signout = () => {
         localStorage.removeItem("token");
         navigate("/");
     };
 
-    // Create Note
     const createNote = async () => {
         const token = localStorage.getItem("token");
         if (!title || !content) {
             alert("Please enter title and content");
             return;
         }
-        const res = await fetch("http://localhost:8000/api/notes/create-notes", {
+        const res = await fetch(`${API_URL}/api/notes/create-notes`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -77,7 +76,7 @@ export default function Dashboard() {
     // Delete Note
     const deleteNote = async (id: string) => {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/notes/delete-notes", {
+        const res = await fetch(`${API_URL}/api/notes/delete-notes`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
