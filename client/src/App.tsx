@@ -5,7 +5,7 @@ import Dashboard from "./components/Notes";
 function App() {
 
   return (
-    <div className='bg-white h-screen w-screen p-2'>
+    <div className='bg-white h-full w-full p-2'>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />

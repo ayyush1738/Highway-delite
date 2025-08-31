@@ -39,7 +39,7 @@ export default function InputField({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="w-full bg-transparent outline-none text-gray-700"
+          className="w-full outline-none text-black"
         />
       </div>
     </div>

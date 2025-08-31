@@ -11,7 +11,10 @@ dotenv.config();
 
 const app: Application = express();
 
-app.use(cors({ origin: "https://notesappq4.vercel.app", credentials: true }));
+app.use(cors({
+  origin: ["https://notesappq4.vercel.app", "http://localhost:5173"],
+  credentials: true
+}));
 
 
 app.use(express.json());

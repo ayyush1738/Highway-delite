@@ -68,7 +68,7 @@ export default function Dashboard() {
       setShowModal(false);
       setTitle("");
       setContent("");
-      fetchNotes(); // refresh notes list
+      fetchNotes();
     } else {
       alert(data.error || "Failed to create note");
     }
@@ -91,50 +91,57 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="h-full w-full p-2">
+    <div className="min-h-screen p-2">
       {/* Header */}
-      <div className="p-4 w-full flex flex-row justify-between">
-        <section className="p-6 flex flex-row w-auto">
-          <img src="/icon.png" alt="" />
-          <h1 className="text-black my-auto ml-4 text-3xl">Dashboard</h1>
-        </section>
-        <div
-          onClick={signout}
-          className="my-auto text-blue-500 underline text-2xl mr-20 cursor-pointer"
-        >
-          Sign Out
-        </div>
-      </div>
+      {/* Header */}
+<div className="p-4 w-full flex flex-row justify-between items-center">
+  <section className="flex flex-row items-center">
+    <img src="/icon.png" alt="" className="w-6 h-6 md:w-10 md:h-10" />
+    <h1 className="text-black ml-4 text-xl sm:text-2xl md:text-3xl">
+      Dashboard
+    </h1>
+  </section>
+  <div
+    onClick={signout}
+    className="text-blue-500 underline text-base sm:text-lg md:text-2xl cursor-pointer"
+  >
+    Sign Out
+  </div>
+</div>
+
 
       {/* User Info */}
-      <div className="w-[80%] h-[40%] mx-auto mt-10 rounded-2xl shadow-2xl border-2 p-8 border-gray-200">
-        <h1 className="text-black text-6xl mt-8 pl-8">Welcome, {name}</h1>
-        <h1 className="text-black text-3xl mt-8 pl-8">Email: {email}</h1>
+      <div className="w-full sm:w-[80%] mx-auto mt-6 rounded-2xl shadow-2xl border-2 p-6 border-gray-200">
+        <h1 className="text-black text-2xl sm:text-4xl font-bold">
+          Welcome, {name}
+        </h1>
+        <h2 className="text-black text-lg sm:text-2xl mt-4">Email: {email}</h2>
       </div>
 
-      {/* Create Note Button */}
-      <div className="w-[80%] mx-auto flex flex-col p-4 justify-center items-center">
+      {/* Create Note Button + Notes */}
+      <div className="w-full sm:w-[80%] mx-auto flex flex-col p-4 justify-center items-center">
         <button
           onClick={() => setShowModal(true)}
-          className="w-[50%] h-20 bg-blue-500 text-white py-2 rounded-2xl mt-4 cursor-pointer hover:bg-blue-600"
+          className="w-full sm:w-[50%] h-14 sm:h-20 bg-blue-500 text-white py-2 rounded-2xl mt-4 cursor-pointer hover:bg-blue-600"
         >
           Create Note
         </button>
 
         {/* Notes List */}
-        <div className="w-[50%] mt-6">
+        <div className="w-full sm:w-[50%] mt-6">
           {notes.length > 0 ? (
             notes.map((note) => (
               <div
                 key={note.id}
                 className="p-4 mb-2 border text-black rounded-lg shadow hover:bg-gray-100 flex justify-between items-center"
               >
-                <span>{note.title}</span>
+                <span className="truncate">{note.title}</span>
                 <div
-                  className="text-red-500 cursor-pointer"
+                  className="text-red-500 cursor-pointer ml-2"
                   onClick={() => deleteNote(note.id)}
-                >          <img src="/del.png" alt="" />
-</div>
+                >
+                  <img src="/del.png" alt="delete" className="w-6 h-6" />
+                </div>
               </div>
             ))
           ) : (
@@ -145,9 +152,9 @@ export default function Dashboard() {
 
       {/* Modal for Create Note */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-2xl shadow-lg w-[400px]">
-            <h2 className="text-xl font-bold mb-4">Create Note</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center px-2">
+          <div className="bg-white p-6 rounded-2xl shadow-lg w-full sm:w-[400px]">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">Create Note</h2>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -160,16 +167,16 @@ export default function Dashboard() {
               placeholder="Note content"
               className="w-full p-2 border rounded-lg mb-3 text-black"
             />
-            <div className="flex justify-between">
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-300 rounded-lg w-full sm:w-auto"
               >
                 Cancel
               </button>
               <button
                 onClick={createNote}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg w-full sm:w-auto"
               >
                 Save
               </button>

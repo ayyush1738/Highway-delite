@@ -3,7 +3,7 @@ import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
 
 export default function Forms() {
-  const [signup, setSignup] = useState(true); // toggle between signup/signin
+  const [signup, setSignup] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     dob: "",
@@ -16,20 +16,16 @@ export default function Forms() {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   // Request OTP
   const handleGetOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const url = signup
         ? "http://localhost:8000/api/auth/signup/send-otp"
-        : "http://localhost:8000/api/auth/signin/send-otp"; // adjust backend endpoint for signin
+        : "http://localhost:8000/api/auth/signin/send-otp";
 
       const body: any = { email: formData.email };
       if (signup) {
@@ -60,11 +56,10 @@ export default function Forms() {
   // Verify OTP / Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const url = signup
         ? "http://localhost:8000/api/auth/signup/verify-otp"
-        : "http://localhost:8000/api/auth/signin/verify-otp"; // adjust backend endpoint for signin
+        : "http://localhost:8000/api/auth/signin/verify-otp";
 
       const res = await fetch(url, {
         method: "POST",
@@ -101,123 +96,167 @@ export default function Forms() {
   };
 
   return (
-    <div className="h-[80%] w-full flex justify-center items-center align-middle">
+    <div className="h-[80%] w-full flex justify-center items-center">
       <div className="w-[80%] h-[80%] p-12">
         <h2 className="text-black text-4xl font-bold mt-8 mb-4">
           {signup ? "Sign Up" : "Sign In"}
         </h2>
         <p className="text-gray-500">
-          {signup ? "Sign up to enjoy the feature of HD" : "Sign in to access your account"}
+          {signup
+            ? "Sign up to enjoy the feature of HD"
+            : "Sign in to access your account"}
         </p>
-        <form
-          onSubmit={showOtpField ? handleSubmit : handleGetOtp}
-          className="w-[90%] h-[80%] mt-4 space-y-4"
-        >
-          {/* Show name and dob only for signup */}
-          {signup && (
-            <>
-              <InputField
-                id="name"
-                label="Your Name"
-                type="text"
-                placeholder="Please Enter Your Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-              <InputField
-                id="dob"
-                label="Date of Birth"
-                type="date"
-                placeholder="11 December 1997"
-                value={formData.dob}
-                onChange={handleChange}
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 cursor-pointer"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    onClick={() => {
-                      const input = document.getElementById("dob") as HTMLInputElement | null;
-                      input?.showPicker?.();
-                    }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                }
-              />
-            </>
-          )}
 
-          <InputField
-            id="email"
-            label="Your Email"
-            type="email"
-            placeholder="youremail@xyz"
-            value={formData.email}
-            onChange={handleChange}
-          />
-
-          {showOtpField && (
-            <div className="space-y-2">
-              <InputField
-                id="otp"
-                label="Enter OTP"
-                type="text"
-                placeholder="Enter the 6-digit OTP"
-                value={formData.otp}
-                onChange={handleChange}
-              />
-              <p className="text-sm text-gray-500">
-                Time left:{" "}
-                <span className="font-semibold text-red-500">{formatTime(timer)}</span>
-              </p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 cursor-pointer hover:bg-blue-600"
+        {/* -------- Sign Up Form -------- */}
+        {signup && (
+          <form
+            onSubmit={showOtpField ? handleSubmit : handleGetOtp}
+            className="w-[90%] h-[80%] mt-4 space-y-4"
           >
-            {showOtpField ? "Verify OTP" : "Get OTP"}
-          </button>
+            <InputField
+              id="name"
+              label="Your Name"
+              type="text"
+              placeholder="Please Enter Your Name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <InputField
+              id="dob"
+              label="Date of Birth"
+              type="date"
+              value={formData.dob}
+              onChange={handleChange}
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  onClick={() => {
+                    const input = document.getElementById(
+                      "dob"
+                    ) as HTMLInputElement | null;
+                    input?.showPicker?.();
+                  }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              }
+            />
+            <InputField
+              id="email"
+              label="Your Email"
+              type="email"
+              placeholder="youremail@xyz"
+              value={formData.email}
+              onChange={handleChange}
+            />
 
-          <div className="flex flex-row justify-center items-center">
-            {signup ? (
+            {showOtpField && (
               <>
-                <p className="text-gray-600">Already have an account?</p>
-                <div
-                  className="text-blue-500 underline ml-2 cursor-pointer"
-                  onClick={() => {
-                    setSignup(false);
-                    setShowOtpField(false);
-                  }}
-                >
-                  Sign in
-                </div>
-              </>
-            ) : (
-              <>
-                <p className="text-gray-600">Don't have an account?</p>
-                <div
-                  className="text-blue-500 underline ml-2 cursor-pointer"
-                  onClick={() => {
-                    setSignup(true);
-                    setShowOtpField(false);
-                  }}
-                >
-                  Sign up
-                </div>
+                <InputField
+                  id="otp"
+                  label="Enter OTP"
+                  type="text"
+                  placeholder="Enter the 6-digit OTP"
+                  value={formData.otp}
+                  onChange={handleChange}
+                />
+                <p className="text-sm text-gray-500">
+                  Time left:{" "}
+                  <span className="font-semibold text-red-500">
+                    {formatTime(timer)}
+                  </span>
+                </p>
               </>
             )}
-          </div>
-        </form>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 hover:bg-blue-600"
+            >
+              {showOtpField ? "Verify OTP" : "Get OTP"}
+            </button>
+
+            <p className="text-gray-600 mt-4 ml-14">
+              Already have an account?{" "}
+              <span
+                className="text-blue-500 underline cursor-pointer"
+                onClick={() => {
+                  setSignup(false);
+                  setShowOtpField(false);
+                }}
+              >
+                Sign in
+              </span>
+            </p>
+          </form>
+        )}
+
+        {/* -------- Sign In Form -------- */}
+        {!signup && (
+          <form
+            onSubmit={showOtpField ? handleSubmit : handleGetOtp}
+            className="w-[90%] h-[80%] mt-4 space-y-4"
+          >
+            <InputField
+              id="email"
+              label="Your Email"
+              type="email"
+              placeholder="youremail@xyz"
+              value={formData.email}
+              onChange={handleChange}
+            />
+
+            
+                <InputField
+                  id="otp"
+                  label="Enter OTP"
+                  type="text"
+                  placeholder="Enter the 6-digit OTP"
+                  value={formData.otp}
+                  onChange={handleChange}
+                />
+                {/* timer only visible after OTP requested */}
+                {showOtpField && (
+              <>
+                <p className="text-sm text-gray-500">
+                  Time left:{" "}
+                  <span className="font-semibold text-red-500">
+                    {formatTime(timer)}
+                  </span>
+                </p>
+              </>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded-md mt-4 hover:bg-blue-600"
+            >
+              {showOtpField ? "Verify OTP" : "Get OTP"}
+            </button>
+
+            <p className="text-gray-600 mt-4">
+              Don’t have an account?{" "}
+              <span
+                className="text-blue-500 underline cursor-pointer"
+                onClick={() => {
+                  setSignup(true);
+                  setShowOtpField(false);
+                }}
+              >
+                Sign up
+              </span>
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );
