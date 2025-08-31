@@ -3,7 +3,7 @@ import Forms from './Forms';
 
 export default function Home() {
     return (
-        <div className="flex flex-row h-full">
+        <div className="flex flex-row h-screen">
             <div className="w-[40%]">
                 <section className="p-4">
                     <img src="/logo.png" alt="" />
