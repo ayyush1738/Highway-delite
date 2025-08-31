@@ -3,7 +3,7 @@ import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Loader2 } from "lucide-react"; 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL =  import.meta.env.VITE_API_URL
 
 export default function Forms() {
   const [signup, setSignup] = useState(true);
@@ -14,7 +14,6 @@ export default function Forms() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false); // Track if OTP has been sent for sign-in
   const [keepLoggedIn, setKeepLoggedIn] = useState(false); // State for the checkbox
 
   const navigate = useNavigate();
@@ -84,7 +83,6 @@ export default function Forms() {
       }
 
       setTimer(300); // Start the resend timer
-      setOtpSent(true); // Mark that OTP has been sent
       setSuccess("OTP sent successfully! Check your email.");
     } catch (err) {
       console.error(err);
@@ -106,6 +104,7 @@ export default function Forms() {
         ?  `${API_URL}/api/auth/signup/verify-otp`
         :  `${API_URL}/api/auth/signin/verify-otp`;
 
+      // The body sent to the backend should be signInData, keepLoggedIn is a client-side preference
       const body = signup ? signUpData : signInData;
 
       const res = await fetch(url, {
@@ -118,8 +117,10 @@ export default function Forms() {
 
       if (res.ok && data.token) {
         if (keepLoggedIn) {
+          // just store raw token
           localStorage.setItem("token", data.token);
         } else {
+          // wrap with expiry in another key
           const expiry = Date.now() + 60 * 60 * 1000; // 1 hour
           localStorage.setItem("token", data.token);
           localStorage.setItem("expiry", expiry.toString());
@@ -157,9 +158,9 @@ export default function Forms() {
     setError(null);
     setSuccess(null);
     setShowOtpField(false);
-    setOtpSent(false);
     setTimer(0);
     setKeepLoggedIn(false); // Also reset the checkbox state
+    // It's good practice to clear form data on switch as well
     setSignUpData({ name: "", dob: "", email: "", otp: "" });
     setSignInData({ email: "", otp: "" });
   }
@@ -282,7 +283,7 @@ export default function Forms() {
                   type="button"
                   onClick={handleSignInOtpRequest}
                   disabled={timer > 0 || loading}
-                  className="font-bold mb-4 text-sm text-blue-500 underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                  className="font-bold mb-4 cursor-pointer text-sm text-blue-500 underline disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                 </button>

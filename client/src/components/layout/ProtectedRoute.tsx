@@ -1,5 +1,4 @@
-// components/layout/ProtectedRoute.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -31,7 +30,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const tokenExists = getToken();
   if (!tokenExists) {
-    return null; // can show spinner
+    return null;
   }
 
   return <>{children}</>;
