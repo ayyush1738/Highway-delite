@@ -12,26 +12,27 @@ export default function Forms() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false); // Track if OTP has been sent for sign-in
 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (signup) setSignUpData({ ...signUpData, [e.target.id]: e.target.value });
-    else setSignInData({ ...signInData, [e.target.id]: e.target.value });
+    if (signup) {
+      setSignUpData({ ...signUpData, [e.target.id]: e.target.value });
+    } else {
+      setSignInData({ ...signInData, [e.target.id]: e.target.value });
+    }
   };
 
-  const handleGetOtp = async (e: React.FormEvent) => {
+  const handleSignUpOtpRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
     setLoading(true);
 
     try {
-      const url = signup
-        ? "http://localhost:8000/api/auth/signup/send-otp"
-        : "http://localhost:8000/api/auth/signin/send-otp";
-
-      const body = signup ? signUpData : signInData;
+      const url = "http://localhost:8000/api/auth/signup/send-otp";
+      const body = { name: signUpData.name, dob: signUpData.dob, email: signUpData.email };
 
       const res = await fetch(url, {
         method: "POST",
@@ -43,7 +44,6 @@ export default function Forms() {
 
       if (!res.ok) {
         setError(data.error || "Failed to send OTP");
-        setLoading(false);
         return;
       }
 
@@ -57,6 +57,40 @@ export default function Forms() {
       setLoading(false);
     }
   };
+
+  const handleSignInOtpRequest = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!signInData.email) {
+      setError("Please enter your email to receive an OTP.");
+      return;
+    }
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/signin/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: signInData.email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send OTP");
+        return;
+      }
+
+      setTimer(300); // Start the resend timer
+      setOtpSent(true); // Mark that OTP has been sent
+      setSuccess("OTP sent successfully! Check your email.");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to send OTP. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,11 +128,22 @@ export default function Forms() {
   };
 
   useEffect(() => {
+    let interval: number | undefined;
     if (timer > 0) {
-      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-      return () => clearInterval(interval);
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
     }
+    return () => clearInterval(interval);
   }, [timer]);
+
+  const resetForms = () => {
+      setError(null);
+      setSuccess(null);
+      setShowOtpField(false);
+      setOtpSent(false);
+      setTimer(0);
+  }
 
   return (
     <div className="h-[80%] w-full flex justify-center items-start md:items-center">
@@ -117,7 +162,7 @@ export default function Forms() {
             {error && <p className="text-red-500 font-semibold mb-2 text-center md:text-left">{error}</p>}
             {success && <p className="text-green-500 font-semibold mb-2 text-center md:text-left">{success}</p>}
 
-            <form onSubmit={showOtpField ? handleSubmit : handleGetOtp} className="space-y-4 w-full">
+            <form onSubmit={showOtpField ? handleSubmit : handleSignUpOtpRequest} className="space-y-4 w-full">
               <InputField
                 id="name"
                 label="Your Name"
@@ -165,7 +210,7 @@ export default function Forms() {
                     Processing...
                   </>
                 ) : (
-                  showOtpField ? "Verify OTP" : "Get OTP"
+                  showOtpField ? "Verify OTP & Sign Up" : "Get OTP"
                 )}
               </button>
             </form>
@@ -174,7 +219,7 @@ export default function Forms() {
               Already have an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer underline"
-                onClick={() => { setSignup(false); setShowOtpField(false); setError(null); setSuccess(null); }}
+                onClick={() => { setSignup(false); resetForms(); }}
               >
                 Sign in
               </span>
@@ -195,7 +240,7 @@ export default function Forms() {
             {error && <p className="text-red-500 font-semibold mb-2 text-center md:text-left">{error}</p>}
             {success && <p className="text-green-500 font-semibold mb-2 text-center md:text-left">{success}</p>}
 
-            <form onSubmit={showOtpField ? handleSubmit : handleGetOtp} className="space-y-4 w-full">
+            <form onSubmit={handleSubmit} className="space-y-4 w-full">
               <InputField
                 id="email"
                 label="Email"
@@ -205,16 +250,20 @@ export default function Forms() {
                 onChange={handleChange}
               />
 
-              {showOtpField && (
-                <InputField
-                  id="otp"
-                  label="OTP"
-                  type="password"
-                  placeholder="Enter OTP"
-                  value={signInData.otp}
-                  onChange={handleChange}
-                />
-              )}
+              
+                  <InputField
+                    id="otp"
+                    label="OTP"
+                    type="password"
+                    placeholder="Enter OTP"
+                    value={signInData.otp}
+                    onChange={handleChange}
+                  />
+        
+
+                <button onClick={handleSignInOtpRequest} ><div className="font-bold text-sm py-2 flex justify-center items-center rounded text-blue-500 underline">Resend OTP</div></button>
+            
+
 
               <button
                 type="submit"
@@ -224,19 +273,19 @@ export default function Forms() {
                 {loading ? (
                   <>
                     <Loader2 className="animate-spin w-5 h-5 mr-2" />
-                    Processing...
+                    Signing In...
                   </>
                 ) : (
-                  <>Sign in</>
+                  'Sign In'
                 )}
               </button>
             </form>
 
             <p className="mt-4 text-center md:text-left text-gray-600">
-              need an account?{" "}
+              Need an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer underline"
-                onClick={() => { setSignup(true); setShowOtpField(false); setError(null); setSuccess(null); }}
+                onClick={() => { setSignup(true); resetForms(); }}
               >
                 Create one
               </span>
