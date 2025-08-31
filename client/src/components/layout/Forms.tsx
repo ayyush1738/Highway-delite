@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 import { useNavigate } from "react-router-dom";
-import { Calendar } from "lucide-react"; // calendar icon
+import { Calendar, Loader2 } from "lucide-react"; // Loader2 for spinner
 
 export default function Forms() {
   const [signup, setSignup] = useState(true);
@@ -103,6 +103,7 @@ export default function Forms() {
   return (
     <div className="h-[80%] w-full flex justify-center items-start md:items-center">
       <div className="w-full md:w-[80%] p-4 md:p-12 flex flex-col items-center md:items-start">
+        
         {/* SIGN UP FORM */}
         {signup && (
           <div className="w-full max-w-md md:mt-12">
@@ -131,7 +132,7 @@ export default function Forms() {
                 type="date"
                 value={signUpData.dob}
                 onChange={handleChange}
-                icon={<Calendar className="w-5 h-5" />} // calendar icon at start
+                icon={<Calendar className="w-5 h-5" />}
               />
               <InputField
                 id="email"
@@ -146,7 +147,7 @@ export default function Forms() {
                 <InputField
                   id="otp"
                   label="OTP"
-                  type="password" // removed hide/show toggle
+                  type="password"
                   placeholder="Enter OTP"
                   value={signUpData.otp}
                   onChange={handleChange}
@@ -155,19 +156,27 @@ export default function Forms() {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-blue-500 text-white rounded"
+                disabled={loading}
+                className={`w-full py-2 flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
               >
-                {showOtpField ? "Verify OTP" : "Get OTP"}
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                    Processing...
+                  </>
+                ) : (
+                  showOtpField ? "Verify OTP" : "Get OTP"
+                )}
               </button>
             </form>
 
-            <p className="mt-4 text-center md:text-left">
+            <p className="mt-4 text-center md:text-left text-gray-600">
               Already have an account?{" "}
               <span
-                className="text-blue-500 cursor-pointer"
+                className="text-blue-500 cursor-pointer underline"
                 onClick={() => { setSignup(false); setShowOtpField(false); setError(null); setSuccess(null); }}
               >
-                Sign In
+                Sign in
               </span>
             </p>
           </div>
@@ -200,7 +209,7 @@ export default function Forms() {
                 <InputField
                   id="otp"
                   label="OTP"
-                  type="password" // removed hide/show toggle
+                  type="password"
                   placeholder="Enter OTP"
                   value={signInData.otp}
                   onChange={handleChange}
@@ -209,19 +218,27 @@ export default function Forms() {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-blue-500 text-white rounded"
+                disabled={loading}
+                className={`w-full py-2 flex justify-center items-center rounded ${loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"} text-white`}
               >
-                {showOtpField ? "Verify OTP" : "Get OTP"}
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                    Processing...
+                  </>
+                ) : (
+                  <>Sign in</>
+                )}
               </button>
             </form>
 
-            <p className="mt-4 text-center md:text-left">
-              Don’t have an account?{" "}
+            <p className="mt-4 text-center md:text-left text-gray-600">
+              need an account?{" "}
               <span
-                className="text-blue-500 cursor-pointer"
+                className="text-blue-500 cursor-pointer underline"
                 onClick={() => { setSignup(true); setShowOtpField(false); setError(null); setSuccess(null); }}
               >
-                Sign Up
+                Create one
               </span>
             </p>
           </div>
