@@ -16,7 +16,7 @@ export default function Home() {
 
         {/* Form takes remaining space */}
         <div className="flex-1 overflow-y-auto">
-          <div className="h-full p-4 box-border">
+          <div className="h-full w-full p-4 box-border">
             <Forms />
           </div>
         </div>
