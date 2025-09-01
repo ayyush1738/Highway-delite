@@ -36,28 +36,28 @@ export const requestSignupOtp = async (req: Request, res: Response) => {
 export const verifySignupOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp, name, dob } = req.body;
-    if (!email || !otp || !name || !dob) 
+    if (!email || !otp || !name || !dob ) 
       return res.status(400).json({ error: "email, otp, name, dob required" });
 
     const stored = await getStoredOtp(email);
-    console.log("Stored OTP:", stored, "Incoming OTP:", otp);
+    console.log("verifySignupOtp -> stored OTP:", stored, "incoming OTP:", otp);
 
     if (!stored) return res.status(400).json({ error: "OTP expired or not requested" });
     if (String(stored) !== String(otp)) return res.status(400).json({ error: "Invalid OTP" });
 
-    // Find or create user
     let user = await findByEmail(email);
     if (!user) {
-      user = await createUser({ email, name, dob });
+      user = await createUser({ email, name, dob }); 
     }
 
-    await clearOtp(email); // Clear OTP after successful verification
+    await clearOtp(email);
 
     const token = generateToken({ id: user.id, email: user.email });
     return res.json({ token, user: { id: user.id, email: user.email, name: user.name, dob: user.dob } });
+
   } catch (err) {
-    console.error("verifySignupOtp error:", err);
-    return res.status(500).json({ error: "Verification failed" });
+    console.error("verifySignupOtp caught error:", err);
+    return res.status(500).json({ error: "Verification failed", details: String(err) });
   }
 };
 
