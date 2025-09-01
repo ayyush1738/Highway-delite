@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import redisClient from "../config/redis";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const OTP_TTL = Number(process.env.OTP_TTL_SECONDS ?? 300);
@@ -12,14 +13,13 @@ const keyResend = (email: string) => `otp-resend:${email.toLowerCase()}`;
 export const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
 export const canResend = async (email: string) => {
-  const k = keyResend(email);
-  const v = await redisClient.get(k);
-  return !v;
+  const v = await redisClient.get(keyResend(email));
+  return !v; // if no value, resend allowed
 };
 
 export const saveOtp = async (email: string, otp: string) => {
-  await redisClient.setEx(keyOtp(email), OTP_TTL, otp);
-  await redisClient.setEx(keyResend(email), OTP_RESEND_TTL, "1");
+  await redisClient.set(keyOtp(email), otp, { ex: OTP_TTL });
+  await redisClient.set(keyResend(email), "1", { ex: OTP_RESEND_TTL });
 };
 
 export const getStoredOtp = async (email: string) => {
